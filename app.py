@@ -23,11 +23,6 @@ MEDICAL_DATA = [
 ]
 
 # --- PRE-TRAINED MODEL FOR SYMPTOM EXTRACTION ---
-# This is our predictive field. We'll use a pre-trained Named Entity Recognition (NER) model
-# to identify symptoms and diseases from the user's input.
-# 'dslim/bert-base-NER' is a great general-purpose NER model.
-# For a real-world medical application, you would fine-tune a model like BioBERT on a medical dataset.
-
 @st.cache_resource
 def get_ner_pipeline():
     """Caches the NER pipeline to avoid reloading the model on every interaction."""
@@ -76,16 +71,15 @@ with tab1:
         "What is the relationship between cholesterol and heart disease?"
     ]
     
-    # Use st.columns to display buttons in a row
     cols = st.columns(len(default_questions))
     
     for col, question in zip(cols, default_questions):
         with col:
-            if st.button(question, key=question):
+            if col.button(question):
                 st.session_state.user_question = question
-                st.experimental_rerun()
-                
-    if st.session_state.user_question:
+                st.rerun()  # The corrected line
+
+    if st.session_state.user_question and st.session_state.user_question != user_question:
         response = find_relevant_info(st.session_state.user_question)
         st.write(response)
 
